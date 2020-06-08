@@ -18,6 +18,7 @@ logging.basicConfig(
     level="INFO",
     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
     datefmt="%H:%M:%S")
+logging.getLogger("discord").setLevel(logging.ERROR)
 logger = logging.getLogger(__name__)
 
 
@@ -35,13 +36,15 @@ async def on_guild_join(guild):
 
 @bot.command(name="item", help="Responds with a link to the item in VillagerDB")
 async def item_search(ctx, *item_name):
+    item_name = " ".join(item_name)
+
+    logger.info("Search request: '%s'", item_name)
+
     if not item_name:
         await ctx.send(
             "Please specify an item name after the command, "
             "ex: `!item giant teddy bear`")
         return
-
-    item_name = " ".join(item_name)
 
     async with aiohttp.ClientSession() as session:
         raw_response = await session.get(
