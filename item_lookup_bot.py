@@ -13,12 +13,6 @@ VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
 
 bot = commands.Bot(command_prefix="!")
 
-"""
-TODO:
-1. Rename bot to Item Lookup Bot
-2. Create Villager Lookup Bot (!villager)
-"""
-
 
 @bot.event
 async def on_ready():
