@@ -12,14 +12,14 @@ DISCORD_BOT_TOKEN = os.getenv("ACNH_BOT_TOKEN")
 VILLAGER_DB_AUTOCOMPLETE_URL = "https://villagerdb.com/autocomplete"
 VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
 
-bot = commands.Bot(command_prefix="!")
-
 logging.basicConfig(
     level="INFO",
     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
     datefmt="%H:%M:%S")
 logging.getLogger("discord").setLevel(logging.ERROR)
 logger = logging.getLogger(__name__)
+
+bot = commands.Bot(command_prefix="!")
 
 
 @bot.event
