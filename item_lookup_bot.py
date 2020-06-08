@@ -1,5 +1,6 @@
 import aiohttp
 import json
+import logging
 import os
 import requests
 
@@ -13,27 +14,34 @@ VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
 
 bot = commands.Bot(command_prefix="!")
 
+logging.basicConfig(
+    level="INFO",
+    format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+    datefmt="%H:%M:%S")
+logger = logging.getLogger(__name__)
+
 
 @bot.event
 async def on_ready():
-    print("Started up {}".format(bot.user.name))
-    print("Bot running on servers: {}".format(
-        ", ".join([guild.name for guild in bot.guilds])))
+    logger.info("Started up %s", bot.user.name)
+    logger.info("Bot running on servers: %s",
+                ", ".join([guild.name for guild in bot.guilds]))
 
 
 @bot.event
 async def on_guild_join(guild):
-    print("Bot added to new guild! Guild name: {}".format(guild.name))
+    logger.info("Bot added to new server! Server name: %s", guild.name)
 
 
-@bot.command(name="item", help="Responds with a link for the item on VillagerDB")
+@bot.command(name="item", help="Responds with a link to the item in VillagerDB")
 async def item_search(ctx, *item_name):
     if not item_name:
-        await ctx.send("Please specify an item name after the command, "
-                       "ex: `!item giant teddy bear`")
+        await ctx.send(
+            "Please specify an item name after the command, "
+            "ex: `!item giant teddy bear`")
         return
 
-    item_name = "-".join(item_name)
+    item_name = " ".join(item_name)
 
     async with aiohttp.ClientSession() as session:
         raw_response = await session.get(
