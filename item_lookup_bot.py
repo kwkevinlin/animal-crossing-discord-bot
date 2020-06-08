@@ -21,6 +21,11 @@ async def on_ready():
         ", ".join([guild.name for guild in bot.guilds])))
 
 
+@bot.event
+async def on_guild_join(guild):
+    print("Bot added to new guild! Guild name: {}".format(guild.name))
+
+
 @bot.command(name="item", help="Responds with a link for the item on VillagerDB")
 async def item_search(ctx, *item_name):
     if not item_name:
