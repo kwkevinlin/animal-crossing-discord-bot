@@ -2,7 +2,6 @@ import aiohttp
 import json
 import logging
 import os
-import requests
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -11,6 +10,7 @@ load_dotenv()
 DISCORD_BOT_TOKEN = os.getenv("ACNH_BOT_TOKEN")
 VILLAGER_DB_AUTOCOMPLETE_URL = "https://villagerdb.com/autocomplete"
 VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
+VILLAGER_DB_VILLAGER_URL = "https://villagerdb.com/villager"
 
 logging.basicConfig(
     level="INFO",
@@ -28,7 +28,6 @@ async def on_ready():
     logger.info("Bot running on servers: %s",
                 ", ".join([guild.name for guild in bot.guilds]))
 
-
 @bot.event
 async def on_guild_join(guild):
     logger.info("Bot added to new server! Server name: %s", guild.name)
@@ -38,7 +37,7 @@ async def on_guild_join(guild):
 async def item_search(ctx, *item_name):
     item_name = " ".join(item_name)
 
-    logger.info("Search request: '%s'", item_name)
+    logger.info("Item search request: '%s'", item_name)
 
     if not item_name:
         await ctx.send(
@@ -47,10 +46,10 @@ async def item_search(ctx, *item_name):
         return
 
     async with aiohttp.ClientSession() as session:
-        raw_response = await session.get(
+        r = await session.get(
             VILLAGER_DB_AUTOCOMPLETE_URL,
             params={"q": item_name})
-        top_matches = await raw_response.json()
+        top_matches = await r.json()
 
         if not top_matches:
             await ctx.send("No items found with that name")
@@ -65,6 +64,32 @@ async def item_search(ctx, *item_name):
             item_url=VILLAGER_DB_ITEM_URL,
             item_name=top_matches[0].replace(" ", "-").lower()
         ))
+
+
+@bot.command(name="villager", help="Responds with a link to the villager in VillagerDB")
+async def villager_search(ctx, *villager_name):
+    villager_name = "-".join(villager_name)
+
+    logger.info("Villager search request: '%s'", villager_name)
+
+    if not villager_name:
+        await ctx.send(
+            "Please specify an item name after the command, "
+            "ex: `!villager raymond`")
+        return
+
+    async with aiohttp.ClientSession() as session:
+        villager_url = "{villager_url}/{villager_name}".format(
+            villager_url=VILLAGER_DB_VILLAGER_URL,
+            villager_name=villager_name)
+
+        r = await session.get(villager_url)
+
+        if r.status == 404:
+            await ctx.send("No villager found with that name")
+            return
+
+        await ctx.send(villager_url)
 
 
 bot.run(DISCORD_BOT_TOKEN)
