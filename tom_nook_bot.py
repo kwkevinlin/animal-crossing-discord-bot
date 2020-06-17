@@ -7,6 +7,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
+
 DISCORD_BOT_TOKEN = os.getenv("ACNH_BOT_TOKEN")
 VILLAGER_DB_AUTOCOMPLETE_URL = "https://villagerdb.com/autocomplete"
 VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
