@@ -3,6 +3,8 @@ import json
 import logging
 import os
 
+from logger import setup_logger, ContextLogAdapter
+
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -13,29 +15,35 @@ VILLAGER_DB_AUTOCOMPLETE_URL = "https://villagerdb.com/autocomplete"
 VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
 VILLAGER_DB_VILLAGER_URL = "https://villagerdb.com/villager"
 
-logging.basicConfig(
-    level="INFO",
-    format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
-    datefmt="%H:%M:%S")
-logging.getLogger("discord").setLevel(logging.ERROR)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(
+#     level="INFO",
+#     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+#     datefmt="%H:%M:%S")
+# logging.getLogger("discord").setLevel(logging.ERROR)
+# logger = logging.getLogger(__name__)
+
+logger = setup_logger()
 
 bot = commands.Bot(command_prefix="!")
 
 
 @bot.event
 async def on_ready():
+    logger = ContextLogAdapter(logger)
     logger.info("Started up %s", bot.user.name)
     logger.info("Bot running on servers: %s",
                 ", ".join([guild.name for guild in bot.guilds]))
 
 @bot.event
 async def on_guild_join(guild):
+    logger = ContextLogAdapter(logger)
     logger.info("Bot added to new server! Server name: %s", guild.name)
 
 
 @bot.command(name="item", help="Responds with a link to the item in VillagerDB")
 async def item_search(ctx, *item_name):
+    logger = ContextLogAdapter(logger, ctx)
+
     item_name = " ".join(item_name)
 
     logger.info("Item search request: '%s'", item_name)
@@ -69,6 +77,8 @@ async def item_search(ctx, *item_name):
 
 @bot.command(name="villager", help="Responds with a link to the villager in VillagerDB")
 async def villager_search(ctx, *villager_name):
+    logger = ContextLogAdapter(logger, ctx)
+
     villager_name = "-".join(villager_name)
 
     logger.info("Villager search request: '%s'", villager_name)
