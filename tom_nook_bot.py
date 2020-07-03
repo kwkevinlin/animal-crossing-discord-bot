@@ -15,9 +15,6 @@ VILLAGER_DB_AUTOCOMPLETE_URL = "https://villagerdb.com/autocomplete"
 VILLAGER_DB_ITEM_URL = "https://villagerdb.com/item"
 VILLAGER_DB_VILLAGER_URL = "https://villagerdb.com/villager"
 
-NO_ITEM_FOUND = "No items found with that name"
-NO_VILLAGER_FOUND = "No villager found with that name"
-
 setup_logger()
 
 bot = commands.Bot(command_prefix="!")
@@ -57,8 +54,9 @@ async def item_search(ctx, *item_name):
         top_matches = await r.json()
 
         if not top_matches:
-            await ctx.send(NO_ITEM_FOUND)
-            logger.info(NO_ITEM_FOUND)
+            error_resp = "No items found with that name"
+            await ctx.send(error_resp)
+            logger.info(error_resp)
             return
 
         if len(top_matches) > 1:
@@ -95,8 +93,9 @@ async def villager_search(ctx, *villager_name):
         r = await session.get(villager_url)
 
         if r.status == 404:
-            await ctx.send(NO_VILLAGER_FOUND)
-            logger.info(NO_VILLAGER_FOUND)
+            error_resp = "No villager found with that name"
+            await ctx.send(error_resp)
+            logger.info(error_resp)
             return
 
         await ctx.send(villager_url)

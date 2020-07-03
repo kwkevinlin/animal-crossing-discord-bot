@@ -1,11 +1,13 @@
 import logging
-
-LOGGER_NAME = "tom_nook_bot"
+import os
 
 
 def setup_logger():
     logging.basicConfig(
         level="INFO",
+        handlers=[
+            logging.FileHandler(os.getenv("LOG_PATH")),
+            logging.StreamHandler()],
         format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d %(identifier)s] %(message)s",
         datefmt="%H:%M:%S")
 
@@ -14,9 +16,9 @@ def setup_logger():
 
 class ContextLogAdapter(logging.LoggerAdapter):
     def __init__(self, ctx=None):
-        logger = logging.getLogger(LOGGER_NAME)
+        logger = logging.getLogger("tom_nook_bot")
 
-        identifier = f"{ctx.guild}:{ctx.author}" if ctx else "setup"
+        identifier = f"{ctx.guild}:{ctx.author}" if ctx else "Main"
         extra = {"identifier": identifier}
 
         super(ContextLogAdapter, self).__init__(logger, extra)
