@@ -8,6 +8,7 @@ from logger import setup_logger, ContextLogAdapter
 from discord.ext import commands
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 DISCORD_BOT_TOKEN = os.getenv("ACNH_BOT_TOKEN")
@@ -26,6 +27,7 @@ async def on_ready():
     logger.info("Started up %s", bot.user.name)
     logger.info("Bot running on servers: %s",
                 ", ".join([guild.name for guild in bot.guilds]))
+
 
 @bot.event
 async def on_guild_join(guild):
@@ -100,5 +102,6 @@ async def villager_search(ctx, *villager_name):
 
         await ctx.send(villager_url)
         logger.info(f"Found: {villager_url}")
+
 
 bot.run(DISCORD_BOT_TOKEN)
